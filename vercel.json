@@ -2,7 +2,7 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "http://54.180.240.229:3001/:path*"
+      "destination": "http://15.165.165.214:3001/:path*"
     }
   ],
   "framework": "nextjs",

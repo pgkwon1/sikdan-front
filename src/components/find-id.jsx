@@ -21,7 +21,7 @@ export default function FindIdComponent() {
 
   const apiFindId = async () => {
     const isError = true;
-    if (findData.name === "" || findData.email === "") {
+    if (findData.email === "") {
       showToast("이름 또는 이메일을 입력해주세요.", isError);
     }
     const { name, email } = findData;
@@ -60,6 +60,14 @@ export default function FindIdComponent() {
           <div className="text-center text-sm text-gray-500 dark:text-gray-400">
             <Link href="/" className="font-medium underline" prefetch={false}>
               로그인
+            </Link>
+            {" | "}
+            <Link
+              href="/member/find-password"
+              className="font-medium underline"
+              prefetch={false}
+            >
+              비밀번호 찾기
             </Link>
           </div>
         </div>

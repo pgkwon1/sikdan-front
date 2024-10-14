@@ -75,7 +75,7 @@ export default function ProfileEditComponent() {
     }
 
     // 선택된 알레르기 배열을 ','로 구분된 문자열로 변환하여 서버에 전송
-    const allergyString = selectedAllergies.length > 0 ? selectedAllergies.join(",") : "";
+    const allergyString = selectedAllergies.length > 0 ? selectedAllergies : [];
 
     const { age, height, weight } = info;
     try {
@@ -129,6 +129,11 @@ export default function ProfileEditComponent() {
   // 목표 설정 페이지로 이동
   const handleGoalSetting = () => {
     router.push("/member/profile/goal"); // 목표 설정 페이지로 이동
+  };
+
+  // 이전 페이지로 이동
+  const handleExit = () => {
+    router.back(); // 이전 페이지로 돌아가기
   };
 
   return (
@@ -307,6 +312,13 @@ export default function ProfileEditComponent() {
           onClick={handleGoalSetting}
         >
           목표 설정
+        </Button>
+        <Button
+          variant="outline"
+          className="bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
+          onClick={handleExit}
+        >
+          나가기
         </Button>
       </div>
     </div>

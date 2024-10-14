@@ -7,6 +7,7 @@ import { setRegisterStep1Data } from "@/store/reducers/member.reducer";
 import { useRouter } from "next/router";
 import { showToast } from "./layout/toast";
 import { api } from "@/modules/api.module";
+import ArrowLeftIcon from "./icon/arrowlefticon";
 
 export default function RegisterStep1Component() {
   const [userId, setUserid] = useState("");
@@ -165,6 +166,12 @@ export default function RegisterStep1Component() {
 
   return (
     <>
+      <button
+        onClick={() => router.push("/")} // 뒤로 가기 기능
+        className="absolute top-4 left-4 p-2 rounded-full hover:bg-gray-300"
+      >
+        <ArrowLeftIcon className="w-5 h-5" />
+      </button>
       <div className="w-full space-y-6">
         <div className="text-center" />
         <div className="space-y-4">

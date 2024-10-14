@@ -33,6 +33,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { showToast } from "./layout/toast";
+import ArrowLeftIcon from "./icon/arrowlefticon";
 
 export default function RegisterStep3Component() {
   const [height, setHeight] = useState("");
@@ -80,6 +81,12 @@ export default function RegisterStep3Component() {
   };
   return (
     <>
+      <button
+        onClick={() => router.push("/member/register/step2")} // 뒤로 가기 기능
+        className="absolute top-4 left-4 p-2 rounded-full hover:bg-gray-300"
+      >
+        <ArrowLeftIcon className="w-5 h-5" />
+      </button>
       <Progress value={60} className="w-full mb-8" />
       <CardTitle className="mb-16">키와 몸무게를 알려주세요</CardTitle>
       <CardTitle className="mb-16 text-sm">

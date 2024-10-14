@@ -119,6 +119,7 @@ export function LoginComponent() {
             href="#"
             className="hover:underline text-black"
             prefetch={false}
+            onClick={() => router.push("/member/find-id")}
           >
             아이디/비밀번호 찾기
           </Link>

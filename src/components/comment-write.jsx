@@ -4,38 +4,50 @@ import { Button } from "@/components/ui/button";
 import { useSelector } from "react-redux";
 import { api } from "@/modules/api.module";
 import { useState } from "react";
+import { showToast } from "./layout/toast";
+import { Select } from "@headlessui/react";
+import { Input } from "./ui/input";
 
-export default function CommentWriteComponent({ feedId, refetchList }) {
+export default function CommentWriteComponent({
+  feedId,
+  refetchList,
+  setFeed,
+}) {
   const { nickname, userId } = useSelector(
     (state) => state.memberReducer.loginData
   );
 
   const [contents, setContents] = useState("");
 
+  const isError = true;
   const handleCommentWrite = async () => {
     const response = await api.post(`/comment/add`, {
       feedId,
       contents,
     });
 
-    if (response.result) {
+    if (response.result === "success") {
       refetchList();
+      setContents("");
+    } else {
+      showToast("댓글 등록에 실패하였습니다.", isError);
     }
   };
 
-  const handleReplyWrite = async () => {};
   return (
     <div className="flex items-start gap-4 rounded-lg bg-card">
-      <div className="flex-1">
+      <div className="flex flex-col gap-4 flex-1">
         <div className="mb-2 font-medium">@{userId}</div>
-        <div className="relative">
+
+        <div className="relative gap-4">
           <Textarea
             placeholder="댓글을 입력해주세요"
-            className="w-full resize-none rounded-lg border border-muted px-4 py-2 pr-12 text-sm"
+            className="w-full resize-none rounded-lg border border-muted px-4 pr-12 text-sm"
             rows={1}
             onChange={(e) => setContents(e.currentTarget?.value)}
             value={contents}
           />
+
           <Button
             type="submit"
             size="icon"

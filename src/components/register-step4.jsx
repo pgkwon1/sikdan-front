@@ -32,6 +32,7 @@ import { setRegisterStep4Data } from "@/store/reducers/member.reducer";
 import { useRouter } from "next/router";
 import { showToast } from "./layout/toast";
 import { api } from "@/modules/api.module";
+import ArrowLeftIcon from "./icon/arrowlefticon";
 
 export default function RegisterStep4Component() {
   const [goal, setGoal] = useState("");
@@ -114,6 +115,12 @@ export default function RegisterStep4Component() {
 
   return (
     <>
+      <button
+        onClick={() => router.push("/member/register/step3")} // 뒤로 가기 기능
+        className="absolute top-4 left-4 p-2 rounded-full hover:bg-gray-300"
+      >
+        <ArrowLeftIcon className="w-5 h-5" />
+      </button>
       <Progress value={95} className="w-full mb-8" />
       <CardTitle className="mb-16">목표가 무엇인가요?</CardTitle>
       <CardTitle className="mb-16 text-sm">

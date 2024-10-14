@@ -5,7 +5,11 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "ghchart.rshah.org",
+        hostname: "mealmates3.s3.us-east-1.amazonaws.com",
+      },
+      {
+        protocol: "https",
+        hostname: "mealmate.blob.core.windows.net",
       },
     ],
   },

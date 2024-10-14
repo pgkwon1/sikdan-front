@@ -17,166 +17,114 @@ To read more about using these font, please visit the Next.js documentation:
 - App Directory: https://nextjs.org/docs/app/building-your-application/optimizing/fonts
 - Pages Directory: https://nextjs.org/docs/pages/building-your-application/optimizing/fonts
 **/
+import Image from "next/image"; // next/image 가져오기
 import { useState, useEffect } from "react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { Button } from "@/components/ui/button"; // Button 컴포넌트 가져오기
+import { api } from "@/modules/api.module";
+import { useRouter } from "next/router"; // 페이지 이동을 위해 추가
+import ExpertBadgeComponent from "./ui/expert-badge";
 
-export function ProfileComponent() {
+export default function ProfileComponent() {
   const [userInfo, setUserInfo] = useState({
     nickname: "",
     email: "",
     feedCount: 0,
     verified: false,
+    memberFeed: [],
   });
+  const router = useRouter(); // useRouter 훅을 사용하여 페이지 이동
 
-  // 로그인한 사용자 정보를 API로부터 가져오는 함수
+  // 사용자 정보를 불러오는 함수
   const getUserInfo = async () => {
     try {
-      // 인증 토큰을 로컬 스토리지에서 가져옴 (로그인 시 저장된 토큰)
-      const token = localStorage.getItem("authToken");
+      const response = await api.get("/member/info");
+      console.log(response);
 
-      // API 요청 시 헤더에 인증 토큰을 포함
-      const response = await fetch("/api/user/info", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`, // Bearer 토큰 방식으로 인증 정보 추가
-        },
-      });
-
-      // API 호출이 실패한 경우 처리
-      if (!response.ok) {
-        throw new Error("API 호출 실패");
+      if (response?.result === "success") {
+        const { nickname, email, feedCount, verified, profileMessage, memberFeed } = response.data;
+        setUserInfo({
+          nickname,
+          email,
+          feedCount,
+          verified,
+          profileMessage: profileMessage || "저는 운동을 사랑하는 전문 트레이너 입니다.",
+          memberFeed,
+        });
       }
-
-      const data = await response.json();
-
-      // 받아온 사용자 데이터를 상태에 저장
-      setUserInfo({
-        nickname: data.nickname,
-        email: data.email,
-        feedCount: data.feedCount,
-        verified: data.verified,
-      });
     } catch (error) {
       console.error("사용자 정보를 불러오는 중 오류 발생:", error);
       alert("사용자 정보를 가져오는 중 오류가 발생했습니다.");
     }
   };
 
-  // 컴포넌트가 마운트될 때 사용자 정보를 가져옴
   useEffect(() => {
     getUserInfo();
   }, []);
 
+  // 정보 수정 페이지로 이동하는 함수
+  const handleEditProfile = () => {
+    router.push("/member/profile/edit"); // 정보 수정 페이지로 이동
+  };
+
   return (
-    <div className="w-full mx-auto">
-      <div className="bg-white dark:bg-gray-950 rounded-lg overflow-hidden">
-        <div className="p-4 flex items-center gap-4 md:p-6">
-          <Avatar className="w-12 h-12 border-2 border-white dark:border-gray-950 md:w-16 md:h-16">
-            <AvatarFallback>{userInfo.nickname ? userInfo.nickname.substring(0, 2) : "?"}</AvatarFallback>
-          </Avatar>
-          <div className="flex-1 grid gap-1 md:gap-2">
-            <div className="flex items-center gap-2 md:gap-3">
-              <h2 className="text-base font-bold md:text-lg">{userInfo.nickname}</h2>
-              {userInfo.verified && (
-                <div className="ml-auto flex items-center gap-2">
-                  <div className="bg-blue-500 rounded-full px-2 py-1 text-white text-xs font-medium flex items-center gap-1 md:px-3 md:py-1.5 md:text-sm">
-                    <CheckIcon className="h-4 w-4 md:h-5 md:w-5" />
-                    Verified
+    <div className="w-full mx-auto max-w-2xl">
+      <div className="bg-white dark:bg-gray-950 rounded-lg overflow-hidden shadow">
+        {/* 상단 영역: 아바타와 정보 수정 버튼 */}
+        <div className="p-4 flex items-center justify-between md:p-6">
+          <div className="flex items-center gap-4">
+            <Avatar className="w-12 h-12 border-2 border-white dark:border-gray-950 md:w-16 md:h-16">
+              <AvatarFallback>{userInfo.nickname ? userInfo.nickname.substring(0, 2) : ""}</AvatarFallback>
+            </Avatar>
+            <div className="flex-1 grid gap-1 md:gap-2">
+              <div className="flex items-center gap-2 md:gap-3">
+                <h2 className="text-base font-bold md:text-lg">{userInfo.nickname || "닉네임 없음"}</h2>
+                {userInfo.trainer_yn === "expert" ? <ExpertBadgeComponent /> : ""}
+                {userInfo.verified && (
+                  <div className="ml-auto flex items-center gap-2">
+                    <div className="bg-blue-500 rounded-full px-2 py-1 text-white text-xs font-medium flex items-center gap-1 md:px-3 md:py-1.5 md:text-sm">
+                      Verified
+                    </div>
                   </div>
-                </div>
-              )}
-            </div>
-            <div className="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400 md:grid md:grid-cols-3 md:gap-4">
-              <div className="flex items-center gap-1">
-                <span className="font-medium">{userInfo.feedCount}</span> posts
-              </div>
-              <div className="flex items-center gap-1">
-                <span className="font-medium">1.2M</span> followers {/* 하드코딩된 팔로워 수 */}
-              </div>
-              <div className="flex items-center gap-1">
-                <span className="font-medium">500</span> following {/* 하드코딩된 팔로잉 수 */}
+                )}
               </div>
             </div>
-            <p className="text-sm line-clamp-2 md:line-clamp-3">사용자 설명이나 바이오가 이곳에 표시됩니다.</p>
           </div>
+
+          {/* 정보 수정 버튼 */}
+          <Button
+            variant="outline"
+            className="bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
+            onClick={handleEditProfile}
+          >
+            정보 수정
+          </Button>
         </div>
+
         <Separator />
-        <div className="grid grid-cols-3 gap-1 p-1 md:grid-cols-4 md:gap-2 md:p-2">
-          {/* 사용자 피드 이미지 */}
-          <div className="relative group">
-            <img src="/placeholder.svg" width={200} height={200} alt="Post" className="aspect-square object-cover" />
-            <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-              <div className="flex items-center gap-2 text-white">
-                <HeartIcon className="h-4 w-4" />
-                <span className="font-medium">1.2K</span>
-                <MessageCircleIcon className="h-4 w-4" />
-                <span className="font-medium">500</span>
+
+        {/* 사용자 피드 연동 (작은 썸네일 형태로 표시) */}
+        <div className="p-4 grid grid-cols-3 gap-2">
+          {userInfo.memberFeed && userInfo.memberFeed?.length > 0 ? (
+            userInfo.memberFeed?.map((feed) => (
+              <div key={feed.id} className="relative cursor-pointer">
+                <img
+                  src={feed.feedDiet?.url}
+                  alt="Post"
+                  layout="responsive"
+                  width={100}
+                  height={100}
+                  className="rounded-md"
+                  onClick={() => router.push(`/main/feed/${feed.id}`)}
+                />
               </div>
-            </div>
-          </div>
-          {/* 더 많은 피드를 추가하려면 여기로 계속 추가 */}
+            ))
+          ) : (
+            <p className="text-sm text-gray-500 col-span-3">아직 작성된 피드가 없습니다.</p>
+          )}
         </div>
       </div>
     </div>
-  );
-}
-
-function CheckIcon(props) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M20 6 9 17l-5-5" />
-    </svg>
-  );
-}
-
-function HeartIcon(props) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
-    </svg>
-  );
-}
-
-function MessageCircleIcon(props) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z" />
-    </svg>
   );
 }

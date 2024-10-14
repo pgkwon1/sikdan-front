@@ -53,7 +53,7 @@ export default function CommentSection({
                   <div className="font-medium flex flex-row items-center gap-4">
                     <span>@{comment.memberComment.userId}</span>
                     <div className="text-gray-500 dark:text-gray-400 text-sm">
-                      {moment(comment.createdAt).fromNow()}{" "}
+                      {moment(comment.createdAt).fromNow()} 
                       {/* 작성한 시간을 상대적으로 표시 */}
                     </div>
                   </div>

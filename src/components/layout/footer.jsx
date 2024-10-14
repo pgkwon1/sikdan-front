@@ -9,7 +9,7 @@ export default function FooterComponent({ isBeforeLogin }) {
       ) : (
         <div className="sticky bottom-0 left-0 right-0 bg-white border-t z-50 py-2 flex justify-between gap-4 items-center">
           <Link
-            href="#"
+            href="/main/feed"
             className="flex px-4  flex-col items-center gap-1 text-muted-foreground hover:text-foreground"
             prefetch={false}
           >

@@ -50,7 +50,7 @@ export default function GoalSettingComponent() {
     try {
       setLoading(true); // 저장 시 로딩 시작
 
-      const response = await api.patch("/member/edit", { goal }); // PATCH 요청으로 목표 저장
+      const response = await api.patch("/member/editGoal", { goal }); // PATCH 요청으로 목표 저장
 
       if (response?.result !== "success") {
         throw new Error("목표 저장에 실패했습니다.");
